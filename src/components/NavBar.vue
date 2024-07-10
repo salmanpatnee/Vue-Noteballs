@@ -9,7 +9,6 @@ const navRef = ref(null)
 onClickOutside(navRef, () => {
   showMobileMenu.value = false
 })
-
 </script>
 <template>
   <nav class="navbar navbar-expand-lg bg-success bg-opacity-75">
@@ -31,7 +30,8 @@ onClickOutside(navRef, () => {
       <div
         class="collapse navbar-collapse"
         :class="{ show: showMobileMenu }"
-        id="navbarSupportedContent" ref="navRef"
+        id="navbarSupportedContent"
+        ref="navRef"
       >
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
