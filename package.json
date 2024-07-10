@@ -13,6 +13,7 @@
   "dependencies": {
     "@vueuse/core": "^10.11.0",
     "bootstrap": "^5.3.3",
+    "firebase": "^9.23.0",
     "pinia": "^2.1.7",
     "vue": "^3.4.29",
     "vue-router": "^4.3.3"
