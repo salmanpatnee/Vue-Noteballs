@@ -2,7 +2,10 @@
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { onClickOutside } from '@vueuse/core'
+import { auth } from '@/includes/firebase'
+import { useAuthStore } from '@/stores/auth'
 
+const authStore = useAuthStore()
 const showMobileMenu = ref(false)
 const navRef = ref(null)
 
@@ -52,6 +55,15 @@ onClickOutside(navRef, () => {
           <li class="nav-item">
             <router-link :to="{ name: 'auth' }" class="nav-link text-white" active-class="active"
               >Login/Register</router-link
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              @click.prevent="authStore.logout"
+              href="#"
+              class="nav-link text-white"
+              active-class="active"
+              >Logout</a
             >
           </li>
         </ul>
