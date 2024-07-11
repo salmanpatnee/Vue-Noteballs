@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
+import AuthView from '@/views/AuthView.vue'
 import StatsView from '@/views/StatsView.vue'
 import NotesEdit from '@/views/NotesEditView.vue'
 
@@ -19,6 +20,11 @@ const routes = [
     path: '/stats',
     name: 'stats',
     component: StatsView
+  },
+  {
+    path: '/auth',
+    name: 'auth',
+    component: AuthView
   }
 ]
 

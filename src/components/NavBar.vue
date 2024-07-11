@@ -48,6 +48,12 @@ onClickOutside(navRef, () => {
               >Stats</router-link
             >
           </li>
+
+          <li class="nav-item">
+            <router-link :to="{ name: 'auth' }" class="nav-link text-white" active-class="active"
+              >Login/Register</router-link
+            >
+          </li>
         </ul>
       </div>
     </div>
