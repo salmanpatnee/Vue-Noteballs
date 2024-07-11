@@ -1,6 +1,14 @@
 <script setup>
+import { onMounted } from 'vue'
+import { useNoteStore } from '@/stores/note'
 import { RouterView } from 'vue-router'
 import Navbar from '@/components/NavBar.vue'
+
+const noteStore = useNoteStore()
+
+onMounted(() => {
+  noteStore.fetchNotes()
+})
 </script>
 
 <template>
