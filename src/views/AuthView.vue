@@ -23,7 +23,7 @@ const submit = () => {
   if (isRegister.value) {
     auth.register(credentials)
   } else {
-    console.log('Login')
+    auth.login(credentials)
   }
 }
 </script>
