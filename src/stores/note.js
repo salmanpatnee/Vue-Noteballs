@@ -1,11 +1,22 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
-import { onSnapshot, doc, query, orderBy, addDoc, updateDoc, deleteDoc } from 'firebase/firestore'
+import {
+  onSnapshot,
+  doc,
+  query,
+  where,
+  orderBy,
+  addDoc,
+  updateDoc,
+  deleteDoc
+} from 'firebase/firestore'
 import { notesCollection } from '@/includes/firebase'
+import { useAuthStore } from './auth'
 
 export const useNoteStore = defineStore('note', () => {
   let notes = ref([])
-
+  let notesUnsubscribeHandle = null
+  let notesQuery
   const note = computed(() => {
     return (id) => notes.value.find((note) => note.id === id)
   })
@@ -16,32 +27,49 @@ export const useNoteStore = defineStore('note', () => {
     notes.value.reduce((total, note) => total + note.body.length, 0)
   )
 
+  const init = () => {
+    const authStore = useAuthStore()
+
+    notesQuery = query(
+      notesCollection,
+      where('user_id', '==', authStore.authUser.id),
+      orderBy('date', 'desc')
+    )
+
+    fetchNotes()
+  }
+
   const fetchNotes = async () => {
     console.log(`Fetching notes`)
 
-    const notesQuery = query(notesCollection, orderBy('date', 'desc'))
+    // Set up a real-time listener
+    notesUnsubscribeHandle = onSnapshot(
+      notesQuery,
+      (querySnapshot) => {
+        const fbnotes = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data()
+        }))
 
-    onSnapshot(notesQuery, (querySnapshot) => {
-      const fb_notes = []
-      querySnapshot.forEach((doc) => {
-        const note = { id: doc.id, ...doc.data() }
-        fb_notes.push(note)
-      })
-      notes.value = fb_notes
-    })
+        notes.value = fbnotes
+      },
+      (error) => {
+        console.error('Error listening to notes:', error)
+      }
+    )
+  }
 
-    // const querySnapshot = await getDocs(notesCollection)
-    // querySnapshot.forEach((doc) => {
-    //   const note = { id: doc.id, ...doc.data() }
-    //   notes.value.push(note)
-    // })
+  const clearNotes = () => {
+    notes.value = []
+    if (notesUnsubscribeHandle) notesUnsubscribeHandle()
   }
 
   const addNote = async (body) => {
+    const authStore = useAuthStore()
     const currentDate = new Date().getTime()
     const date = currentDate.toString()
 
-    await addDoc(notesCollection, { body, date })
+    await addDoc(notesCollection, { user_id: authStore.authUser.id, body, date })
 
     // const note = { id, body }
     // notes.value.unshift(note)
@@ -63,6 +91,7 @@ export const useNoteStore = defineStore('note', () => {
   }
 
   return {
+    init,
     notes,
     note,
     totalNotesCount,
@@ -70,6 +99,7 @@ export const useNoteStore = defineStore('note', () => {
     fetchNotes,
     addNote,
     updateNote,
-    deleteNote
+    deleteNote,
+    clearNotes
   }
 })

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { useNoteStore } from '@/stores/note'
 import NoteEditor from '@/components/NoteEditor.vue'
 import NoteItem from '@/components/NoteItem.vue'
@@ -19,9 +19,6 @@ const addNote = (newNote) => {
 
 const deleteNote = (id) => noteStore.deleteNote(id)
 
-onMounted(() => {
-  noteStore.fetchNotes()
-})
 </script>
 
 <template>

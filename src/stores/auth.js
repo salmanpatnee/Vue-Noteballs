@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { useRouter } from 'vue-router'
+import { useNoteStore } from './note'
 import {
   onAuthStateChanged,
   createUserWithEmailAndPassword,
@@ -14,13 +15,16 @@ export const useAuthStore = defineStore('auth', () => {
   let authUser = ref({})
   const router = useRouter()
 
-  const init = () => {
-    console.log('Init')
-    onAuthStateChanged(auth, (user) => {
+  const init = async () => {
+    console.log('Auth init')
+    await onAuthStateChanged(auth, (user) => {
+      const noteStore = useNoteStore()
       if (user) {
         authUser.value = { id: user.uid, email: user.email }
+        noteStore.init()
       } else {
         authUser.value = {}
+        noteStore.clearNotes()
       }
     })
   }
@@ -28,7 +32,6 @@ export const useAuthStore = defineStore('auth', () => {
   const register = ({ email, password }) => {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        const user = userCredential.user
         router.push({ name: 'home' })
       })
       .catch((error) => {
